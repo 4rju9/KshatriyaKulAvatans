@@ -89,4 +89,14 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun forgotPassword(onSuccess: () -> Unit) {
+        if (email.isBlank()) {
+            error = "Email is required."
+            return
+        }
+        viewModelScope.launch {
+            repo.forgotPassword(email, onSuccess)
+        }
+    }
+
 }

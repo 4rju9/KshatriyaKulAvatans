@@ -6,6 +6,7 @@ import app.netlify.dev4rju9.kshatriyakulavatans.data.remote.retrofit.CloudFlare
 import app.netlify.dev4rju9.kshatriyakulavatans.data.repository.Repository
 import app.netlify.dev4rju9.kshatriyakulavatans.data.room.AppDatabase
 import app.netlify.dev4rju9.kshatriyakulavatans.data.room.SourceDao
+import app.netlify.dev4rju9.kshatriyakulavatans.data.room.UserDao
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.addsourcescreen.AddSourceViewModel
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.authenticationscreens.loginscreen.LoginViewModel
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.authenticationscreens.registrationscreen.RegisterViewModel
@@ -49,8 +50,9 @@ class AppModule {
         firestore: DocumentReference,
         storage: FirebaseStorage,
         sourceDao: SourceDao,
+        userDao: UserDao,
         api: CloudFlare
-    ) = Repository(context, auth, firestore, storage, sourceDao, api)
+    ) = Repository(context, auth, firestore, storage, sourceDao, userDao, api)
 
     @Provides
     @Singleton
@@ -92,5 +94,11 @@ class AppModule {
     fun providesSourceDao (
         db: AppDatabase
     ) = db.sourceDao()
+
+    @Provides
+    @Singleton
+    fun providesUserDao (
+        db: AppDatabase
+    ) = db.userDao()
 
 }

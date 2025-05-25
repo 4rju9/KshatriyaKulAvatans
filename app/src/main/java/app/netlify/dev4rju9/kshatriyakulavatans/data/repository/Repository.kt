@@ -7,6 +7,7 @@ import app.netlify.dev4rju9.kshatriyakulavatans.data.models.User
 import app.netlify.dev4rju9.kshatriyakulavatans.data.models.VersionInfo
 import app.netlify.dev4rju9.kshatriyakulavatans.data.remote.retrofit.CloudFlare
 import app.netlify.dev4rju9.kshatriyakulavatans.data.room.SourceDao
+import app.netlify.dev4rju9.kshatriyakulavatans.data.room.UserDao
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.addsourcescreen.AddSourceUiState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
@@ -26,6 +27,7 @@ class Repository (
     val firestore: DocumentReference,
     val storage: FirebaseStorage,
     val db: SourceDao,
+    val userDao: UserDao,
     val api: CloudFlare
 ) {
 
@@ -88,7 +90,6 @@ class Repository (
             name = name,
             username = username,
             email = email,
-            password = password,
             admin = false
         )
 
@@ -115,7 +116,8 @@ class Repository (
                         val isVerified = auth.currentUser?.isEmailVerified ?: false
 
                         if (!isVerified) {
-                            onError(Exception("Email not verified. Please verify and try again."))
+                            auth.currentUser?.sendEmailVerification()
+                            onError(Exception("Email not verified. Please check you mail and verify."))
                             auth.signOut()
                             return@addOnCompleteListener
                         } else {
@@ -268,6 +270,92 @@ class Repository (
         sharedPreferences.edit().clear().apply()
         db.deleteAllSources()
         auth.signOut()
+    }
+
+    fun forgotPassword (email: String, onSuccess: () -> Unit) {
+        auth.sendPasswordResetEmail(email)
+            .addOnSuccessListener { onSuccess() }
+    }
+
+    fun getCurrentUserData(): User {
+        return User(
+            name = sharedPreferences.getString("name", "unknown")?: "unknown",
+            username = sharedPreferences.getString("username", "unknown")?: "unknown",
+            email = sharedPreferences.getString("email", "unknown")?: "unknown",
+            admin = sharedPreferences.getBoolean("isAdmin", false)
+        )
+    }
+
+    fun updateUserProfile(
+        name: String,
+        username: String,
+        onSuccess: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            onError(Exception("User not authenticated"))
+            return
+        }
+
+        val updates = mapOf(
+            "name" to name,
+            "username" to username
+        )
+
+        firestore.collection("users").document(userId)
+            .update(updates)
+            .addOnSuccessListener {
+                onSuccess()
+                updateUserInRoom(name, username)
+            }
+            .addOnFailureListener { onError(it) }
+    }
+
+    fun updateUserInRoom(name: String, username: String) {
+        // Save the user details into shared preferences or room
+        try {
+            sharedPreferences.edit().apply {
+                putString("name", name)
+                putString("username", username)
+                apply()
+            }
+        } catch (e: Exception) { e.printStackTrace() }
+        Log.d("x4rju9", "saveUserInRoom: ${sharedPreferences.all}")
+    }
+
+    fun getUsers (): Flow<List<User>> {
+        return userDao.getAllUsers()
+    }
+
+    suspend fun fetchAndCacheUsers() {
+        val snapshot = firestore.collection("users").get().await()
+        val users = snapshot.documents.mapNotNull {
+            it.toObject(User::class.java)?.let { user ->
+                User(user.name, user.username, user.email, user.admin)
+            }
+        }
+        userDao.clearAll()
+        userDao.insertUsers(users)
+    }
+
+    suspend fun toggleAdminStatus(email: String, isAdmin: Boolean, onError: (Exception) -> Unit) {
+        try {
+            val userSnapshot = firestore.collection("users")
+                .whereEqualTo("email", email)
+                .get()
+                .await()
+
+            if (!userSnapshot.isEmpty) {
+                val userDocument = userSnapshot.documents[0]
+                userDocument.reference.update("admin", isAdmin).await()
+                fetchAndCacheUsers()
+            } else {
+                onError(Exception("User not found with email: $email"))
+            }
+        } catch (e: Exception) {
+            onError(e)
+        }
     }
 
 }

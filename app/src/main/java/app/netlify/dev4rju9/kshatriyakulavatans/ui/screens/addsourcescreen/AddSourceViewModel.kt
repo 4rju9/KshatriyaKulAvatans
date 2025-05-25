@@ -118,6 +118,7 @@ class AddSourceViewModel @Inject constructor(
                     source = uiState.value.source.trim(),
                     imageUris = imageUrls,
                     researchedBy = repo.sharedPreferences.getString("username", "unknown")?: "unknown",
+                    researcherName = repo.sharedPreferences.getString("name", "unknown")?: "unknown"
                     )
                 }
                 repo.saveSourceInFirebase(
@@ -164,6 +165,7 @@ data class AddSourceUiState(
     val source: String = "",
     val imageUris: List<String> = emptyList(),
     val researchedBy: String = "",
+    val researcherName: String = "",
     @PrimaryKey
     val timestamp: Long = System.currentTimeMillis()
 )

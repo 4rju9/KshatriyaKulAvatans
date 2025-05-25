@@ -22,7 +22,6 @@ class MainScreenViewModel @Inject constructor(
 
     val user by lazy { repo.auth.currentUser }
     var name = mutableStateOf(repo.sharedPreferences.getString("name", "There")?: "There")
-    var username = mutableStateOf(repo.sharedPreferences.getString("username", "unknown")?: "unknown")
     var isAdmin = mutableStateOf(repo.sharedPreferences.getBoolean("isAdmin", false))
 
     private val _sources = mutableStateOf<List<AddSourceUiState>>(emptyList())

@@ -21,6 +21,10 @@ class RegisterViewModel @Inject constructor(
     var password by mutableStateOf("")
     var error by mutableStateOf<String?>(null)
     var isLoading by mutableStateOf(false)
+    var isAdmin = mutableStateOf(repo.sharedPreferences.getBoolean("isAdmin", false))
+
+    var originalName by mutableStateOf("")
+    var originalUsername by mutableStateOf("")
 
     init {
         email = ""
@@ -29,6 +33,48 @@ class RegisterViewModel @Inject constructor(
         isLoading = false
         name = ""
         username = ""
+    }
+
+    fun loadUserData() {
+        viewModelScope.launch {
+            try {
+                val user = repo.getCurrentUserData()
+                name = user.name
+                username = user.username
+
+                originalName = user.name
+                originalUsername = user.username
+            } catch (e: Exception) {
+                error = e.message
+            }
+        }
+    }
+
+    fun hasChanges(): Boolean {
+        return name != originalName || username != originalUsername
+    }
+
+    fun updateUserData(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+
+        if (!hasChanges()) return
+
+        viewModelScope.launch {
+            isLoading = true
+            repo.updateUserProfile(
+                name = name,
+                username = username,
+                onSuccess = {
+                    originalName = name
+                    originalUsername = username
+                    isLoading = false
+                    onSuccess()
+                },
+                onError = {
+                    isLoading = false
+                    onFailure(it)
+                }
+            )
+        }
     }
 
     fun reset() {

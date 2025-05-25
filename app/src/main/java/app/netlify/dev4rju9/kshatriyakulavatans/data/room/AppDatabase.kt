@@ -4,14 +4,16 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import app.netlify.dev4rju9.kshatriyakulavatans.data.models.User
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.addsourcescreen.AddSourceUiState
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-@Database(entities = [AddSourceUiState::class], version = 2, exportSchema = false)
+@Database(entities = [AddSourceUiState::class, User::class], version = 3, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun sourceDao(): SourceDao
+    abstract fun userDao(): UserDao
 }
 
 class Converters {

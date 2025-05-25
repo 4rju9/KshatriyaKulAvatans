@@ -2,6 +2,7 @@ package app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.authenticationscreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,7 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import app.netlify.dev4rju9.kshatriyakulavatans.R
-import app.netlify.dev4rju9.kshatriyakulavatans.others.Screen
+import app.netlify.dev4rju9.kshatriyakulavatans.others.navigation.Screen
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.authenticationscreens.registrationscreen.TextField
 import kotlinx.coroutines.launch
 
@@ -170,6 +171,22 @@ fun LoginScreen(
             ) {
                 Text(if (viewModel.isLoading) "Logging In..." else "Log In")
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "Forgot password?",
+                style = TextStyle(fontSize = 12.sp, color = MaterialTheme.colorScheme.onBackground),
+                modifier = Modifier.clickable { viewModel.forgotPassword {
+                    coroutineScope.launch {
+                        scaffoldState.showSnackbar(
+                            message = "Reset link sent to your email",
+                            withDismissAction = true,
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                } }
+            )
 
             val annotatedText = buildAnnotatedString {
                 append("Don't have an account? ")

@@ -10,7 +10,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,8 +18,9 @@ import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.authenticationscreens
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.authenticationscreens.registrationscreen.RegisterScreen
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.mainscreen.MainScreen
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.mainscreen.MainScreenViewModel
-import app.netlify.dev4rju9.kshatriyakulavatans.others.Screen
+import app.netlify.dev4rju9.kshatriyakulavatans.others.navigation.Screen
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.addsourcescreen.AddSourceScreen
+import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.homescreen.HomeScreen
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.theme.KshatriyakulavatansTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,11 +33,12 @@ class MainActivity : ComponentActivity() {
             KshatriyakulavatansTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val viewModel = hiltViewModel<MainScreenViewModel>()
-                    val startDestination = if (viewModel.user != null) Screen.Main.route
+                    val startDestination = if (viewModel.user != null) Screen.Home.route
                     else Screen.Login.route
                     MyAppNavHost(
                         this,
-                        startDestination = startDestination
+                        startDestination = startDestination,
+                        isAdmin = viewModel.isAdmin.value
                     )
                 }
             }
@@ -49,7 +50,8 @@ class MainActivity : ComponentActivity() {
 fun MyAppNavHost(
     context: Context,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = Screen.Register.route
+    startDestination: String = Screen.Register.route,
+    isAdmin: Boolean
 ) {
     NavHost(navController = navController, startDestination = startDestination) {
         composable(Screen.Register.route) {
@@ -65,22 +67,13 @@ fun MyAppNavHost(
             LoginScreen(
                 navController = navController
             ) {
-                navController.navigate(Screen.Main.route) {
+                navController.navigate(Screen.Home.route) {
                     popUpTo(Screen.Login.route) { inclusive = true }
                 }
             }
         }
-        composable(Screen.Main.route) {
-            MainScreen(
-                context,
-                navController,
-                hiltViewModel()
-            )
-        }
-        composable(Screen.AddSource.route) {
-            AddSourceScreen(
-                navController = navController
-            )
+        composable(Screen.Home.route) {
+            HomeScreen(context, navController, isAdmin)
         }
     }
 }

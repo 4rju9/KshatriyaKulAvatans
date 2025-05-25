@@ -53,7 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import app.netlify.dev4rju9.kshatriyakulavatans.R
-import app.netlify.dev4rju9.kshatriyakulavatans.others.Screen
+import app.netlify.dev4rju9.kshatriyakulavatans.others.navigation.Screen
 import kotlinx.coroutines.launch
 
 @Composable

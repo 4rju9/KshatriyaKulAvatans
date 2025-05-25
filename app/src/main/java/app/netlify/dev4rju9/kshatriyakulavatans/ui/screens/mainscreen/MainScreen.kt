@@ -20,24 +20,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
@@ -45,11 +40,9 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -83,11 +76,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import app.netlify.dev4rju9.kshatriyakulavatans.data.models.VersionInfo
-import app.netlify.dev4rju9.kshatriyakulavatans.others.Screen
 import app.netlify.dev4rju9.kshatriyakulavatans.others.Utility
 import app.netlify.dev4rju9.kshatriyakulavatans.others.Utility.formatTimeAgo
+import app.netlify.dev4rju9.kshatriyakulavatans.others.navigation.Screen
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.addsourcescreen.AddSourceUiState
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
@@ -101,7 +95,7 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     context: Context,
     navController: NavController,
-    viewModel: MainScreenViewModel
+    viewModel: MainScreenViewModel = hiltViewModel()
 ) {
     var showDialog by remember { mutableStateOf(false) }
     val name = (viewModel.name.value.split(" ").firstOrNull() ?: "There")
@@ -130,153 +124,137 @@ fun MainScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(WindowInsets.statusBars.asPaddingValues())
-            ) {
-                // Left side: Menu Icon + Greeting or CompactSearchBar
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = { showDialog = true }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Menu",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                    if (!searchMode) {
+    Column {
 
-                        Spacer(modifier = Modifier.width(15.dp))
-
-                        Text(
-                            text = "Hey $name",
-                            style = TextStyle(
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        )
-                    }
-                }
-
-                if (searchMode) {
-                    CompactSearchBar(
-                        value = searchText,
-                        onValueChange = {
-                            searchText = it
-                            searchJob?.cancel()
-                            searchJob = coroutineScope.launch {
-                                delay(300)
-                                viewModel.updateSearchQuery(it)
-                            }
-                        },
-                        modifier = Modifier.weight(1f),
-                        onClose = {
-                            searchText = ""
-                            searchMode = false
-                            viewModel.updateSearchQuery("")
-                        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            // Left side: Menu Icon + Greeting or CompactSearchBar
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = { showDialog = true }) {
+                    Icon(
+                        imageVector = Icons.Filled.Menu,
+                        contentDescription = "Menu",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(30.dp)
                     )
                 }
+                if (!searchMode) {
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Search Toggle Button
+                    Spacer(modifier = Modifier.width(15.dp))
 
-                    if (!searchMode) {
-                        Button(
-                            onClick = { searchMode = !searchMode },
-                            modifier = Modifier
-                                .height(36.dp)
-                                .align(Alignment.CenterVertically),
-                            contentPadding = PaddingValues(horizontal = 8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "Search Icon",
-                                modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.onPrimary
-                            )
+                    Text(
+                        text = "Hey $name",
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    )
+                }
+            }
+
+            if (searchMode) {
+                CompactSearchBar(
+                    value = searchText,
+                    onValueChange = {
+                        searchText = it
+                        searchJob?.cancel()
+                        searchJob = coroutineScope.launch {
+                            delay(300)
+                            viewModel.updateSearchQuery(it)
                         }
+                    },
+                    modifier = Modifier.weight(1f),
+                    onClose = {
+                        searchText = ""
+                        searchMode = false
+                        viewModel.updateSearchQuery("")
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    // Refresh Button
+                )
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // Search Toggle Button
+
+                if (!searchMode) {
                     Button(
-                        onClick = {
-                            viewModel.refreshSources()
-                            searchText = ""
-                            searchMode = false
-                            viewModel.updateSearchQuery("")
-                        },
+                        onClick = { searchMode = !searchMode },
                         modifier = Modifier
                             .height(36.dp)
                             .align(Alignment.CenterVertically),
                         contentPadding = PaddingValues(horizontal = 8.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh Icon",
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search Icon",
                             modifier = Modifier.size(16.dp),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
                 }
-            }
-        },
-        modifier = Modifier.fillMaxWidth(),
-        containerColor = MaterialTheme.colorScheme.background,
-        content = { innerPadding ->
-            LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(vertical = 16.dp)
-            ) {
-                if (sources.isEmpty() && searchText.isNotEmpty()) {
-                    item {
-                        Text(
-                            text = "No sources found matching \"$searchText\"\nTry a different keyword or refresh the data.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color.Transparent, shape = RoundedCornerShape(12.dp))
-                                .padding(16.dp)
-                        )
-                    }
-                } else {
-                    items(sources) { source ->
-                        SourceCard(
-                            source,
-                            viewModel.isAdmin.value,
-                            onDelete = {
-                                viewModel.deleteSource(source)
-                                viewModel.refreshSources()
-                            }
-                        )
-                    }
+                Spacer(modifier = Modifier.width(8.dp))
+                // Refresh Button
+                Button(
+                    onClick = {
+                        viewModel.refreshSources()
+                        searchText = ""
+                        searchMode = false
+                        viewModel.updateSearchQuery("")
+                    },
+                    modifier = Modifier
+                        .height(36.dp)
+                        .align(Alignment.CenterVertically),
+                    contentPadding = PaddingValues(horizontal = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh Icon",
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
-            }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate(Screen.AddSource.route) },
-                containerColor = MaterialTheme.colorScheme.primary,
-                shape = CircleShape,
-                modifier = Modifier.padding(20.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Source",
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
+                Spacer(modifier = Modifier.width(8.dp))
             }
         }
-    )
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 10.dp)
+                .background(MaterialTheme.colorScheme.background),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(vertical = 16.dp),
+        ) {
+            if (sources.isEmpty() && searchText.isNotEmpty()) {
+                item {
+                    Text(
+                        text = "No sources found matching \"$searchText\"\nTry a different keyword or refresh the data.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.Transparent, shape = RoundedCornerShape(12.dp))
+                            .padding(16.dp)
+                    )
+                }
+            } else {
+                items(sources) { source ->
+                    SourceCard(
+                        source,
+                        viewModel.isAdmin.value,
+                        onDelete = {
+                            viewModel.deleteSource(source)
+                            viewModel.refreshSources()
+                        }
+                    )
+                }
+            }
+        }
+    }
 
     if (showDialog) {
         AlertDialog(
@@ -287,7 +265,7 @@ fun MainScreen(
                 TextButton(onClick = {
                     viewModel.logOut()
                     navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Main.route) { inclusive = true }
+                        popUpTo(Screen.Home.route) { inclusive = true }
                     }
                     showDialog = false
                 }) {
@@ -355,7 +333,7 @@ fun SourceCard(
 
         Text(
             text = source.title,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
                 .pointerInput(Unit) {
                 detectTapGestures(
@@ -364,7 +342,7 @@ fun SourceCard(
                     },
                     onTap = { expanded = !expanded }
                 )
-            }.padding(bottom = 8.dp)
+            }.padding(bottom = 10.dp)
         )
 
         Text(
@@ -378,7 +356,7 @@ fun SourceCard(
                         },
                         onTap = { expanded = !expanded }
                     )
-                }.padding(bottom = 8.dp)
+                }.padding(bottom = 10.dp)
         )
 
         ClickableTextWithLinks(
@@ -386,13 +364,17 @@ fun SourceCard(
             style = MaterialTheme.typography.bodySmall.copy(fontSize = MaterialTheme.typography.bodySmall.fontSize * 1.1f)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "Tags: ${source.tags.joinToString()}", style = MaterialTheme.typography.bodySmall)
+        Spacer(modifier = Modifier.height(10.dp))
+
         Text(
-            text = "Researched by: ${source.researchedBy}",
+            text = "Researched by: ${source.researcherName}",
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.clickable { uriHandler.openUri("https://instagram.com/${source.researchedBy}") }
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(text = "Tags: ${source.tags.joinToString()}", style = MaterialTheme.typography.bodySmall)
         Text(
             text = formatTimeAgo(source.timestamp),
             style = MaterialTheme.typography.bodySmall,
