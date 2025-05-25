@@ -89,6 +89,7 @@ import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import shimmerEffect
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -465,16 +466,9 @@ fun ZoomableImageThumbnail(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.2f))
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .fillMaxSize(0.4f),
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+                    .height(200.dp)
+                    .shimmerEffect()
+            )
         }
     }
 }

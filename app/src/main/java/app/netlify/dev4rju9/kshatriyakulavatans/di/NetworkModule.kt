@@ -22,7 +22,7 @@ object NetworkModule {
         @ApplicationContext
         context: Context
     ): Retrofit = Retrofit.Builder()
-        .baseUrl(context.getString(R.string.base)) // make sure it ends with '/'
+        .baseUrl(context.getString(R.string.base))
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

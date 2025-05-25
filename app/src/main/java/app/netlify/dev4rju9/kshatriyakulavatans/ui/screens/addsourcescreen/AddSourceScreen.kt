@@ -106,11 +106,10 @@ fun AddSourceScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState()
-            )
+            .verticalScroll(rememberScrollState())
     ) {
 
-        Text("Add Source", style = MaterialTheme.typography.headlineSmall)
+        Text("Add Source", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
 
         Spacer(modifier = Modifier.height(8.dp))
 

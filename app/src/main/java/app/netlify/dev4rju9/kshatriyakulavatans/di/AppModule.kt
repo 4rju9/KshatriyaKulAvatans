@@ -10,6 +10,7 @@ import app.netlify.dev4rju9.kshatriyakulavatans.data.room.UserDao
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.addsourcescreen.AddSourceViewModel
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.authenticationscreens.loginscreen.LoginViewModel
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.authenticationscreens.registrationscreen.RegisterViewModel
+import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.kingscreen.KingViewModel
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.mainscreen.MainScreenViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
@@ -77,6 +78,12 @@ class AppModule {
     fun provideAddSourceViewModel(
         repo: Repository
     ) = AddSourceViewModel(repo)
+
+    @Provides
+    @Singleton
+    fun providesKingViewModel(
+        api: CloudFlare
+    ) = KingViewModel(api)
 
     @Provides
     @Singleton

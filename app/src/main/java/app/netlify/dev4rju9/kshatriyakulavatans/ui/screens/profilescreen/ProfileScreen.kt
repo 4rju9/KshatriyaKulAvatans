@@ -65,7 +65,7 @@ fun ProfileScreen(
             )
     ) {
 
-        Text("Profile", style = MaterialTheme.typography.headlineSmall)
+        Text("Profile", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
 
         Spacer(modifier = Modifier.height(8.dp))
 

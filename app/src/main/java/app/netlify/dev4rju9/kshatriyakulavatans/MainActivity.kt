@@ -14,13 +14,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import app.netlify.dev4rju9.kshatriyakulavatans.others.navigation.Screen
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.authenticationscreens.loginscreen.LoginScreen
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.authenticationscreens.registrationscreen.RegisterScreen
-import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.mainscreen.MainScreen
-import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.mainscreen.MainScreenViewModel
-import app.netlify.dev4rju9.kshatriyakulavatans.others.navigation.Screen
-import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.addsourcescreen.AddSourceScreen
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.homescreen.HomeScreen
+import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.mainscreen.MainScreenViewModel
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.theme.KshatriyakulavatansTheme
 import dagger.hilt.android.AndroidEntryPoint
 

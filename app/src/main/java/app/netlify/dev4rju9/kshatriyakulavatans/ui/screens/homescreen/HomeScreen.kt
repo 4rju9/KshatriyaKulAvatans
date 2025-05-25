@@ -1,7 +1,6 @@
 package app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.homescreen
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -21,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import app.netlify.dev4rju9.kshatriyakulavatans.others.navigation.BottomNavItem
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.addsourcescreen.AddSourceScreen
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.administratorscreen.AdministratorScreen
+import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.kingscreen.KingScreen
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.mainscreen.MainScreen
 import app.netlify.dev4rju9.kshatriyakulavatans.ui.screens.profilescreen.ProfileScreen
 
@@ -64,7 +64,7 @@ fun HomeScreen(
                 AddSourceScreen(navController = navController)
             }
             composable(BottomNavItem.Kings.route) {
-                Toast.makeText(context, "Coming Soon!", Toast.LENGTH_SHORT).show() // KingScreen()
+                KingScreen()
             }
             composable(BottomNavItem.Profile.route) {
                 ProfileScreen()
